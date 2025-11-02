@@ -2,6 +2,9 @@
 
 Organize your meme collection without uploading anything to the cloud. Everything runs in your browser or as a native desktop app.
 
+<img width="1903" height="1054" alt="Screenshot 2025-11-01 at 6 40 23 PM" src="https://github.com/user-attachments/assets/1d5cdd28-b759-4781-bb74-3ca7cd420e9f" />
+
+
 ## Features
 
 - **Privacy-first**: All processing happens locally. Your images never leave your device.
@@ -42,6 +45,9 @@ npm run tauri:dev
 ```
 
 ### Production Build
+
+<img width="1677" height="1057" alt="Screenshot 2025-11-01 at 6 38 23 PM" src="https://github.com/user-attachments/assets/070be416-6c53-4d63-b039-c59d6772e875" />
+
 
 **Web:**
 ```bash
