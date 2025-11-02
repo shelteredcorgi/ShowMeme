@@ -46,7 +46,8 @@ npm run tauri:dev
 
 ### Production Build
 
-<img width="1903" height="1054" alt="Screenshot 2025-11-01 at 6 40 23 PM" src="https://github.com/user-attachments/assets/d2ba1ecf-5cac-4314-94de-a9a786966449" />
+
+<img width="1536" height="1045" alt="Screenshot 2025-11-01 at 6 38 23 PM" src="https://github.com/user-attachments/assets/64edbc7b-37d1-449f-9005-af7504c6b27d" />
 
 
 **Web:**
