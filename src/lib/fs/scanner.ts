@@ -153,7 +153,7 @@ export async function scanDirectoryRecursive(
 	return images;
 }
 
-function isImageFile(filename: string): boolean {
+export function isImageFile(filename: string): boolean {
 	const imageExtensions = /\.(jpg|jpeg|png|gif|webp|avif|bmp|svg)$/i;
 	return imageExtensions.test(filename);
 }
