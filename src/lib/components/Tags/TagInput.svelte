@@ -1,52 +1,54 @@
 <script lang="ts">
-	import { addTagToImage, removeTagFromImage } from '$lib/stores/filters';
-	import { getAllTags } from '$lib/db/tags';
-	import type { TagRecord } from '$lib/db/schema';
-	import { onMount } from 'svelte';
-	import { X, Plus } from 'lucide-svelte';
+	import {
+		addTagToImage,
+		removeTagFromImage,
+		tags,
+	} from "$lib/stores/filters";
+	import type { TagRecord } from "$lib/db/schema";
+	import { onMount } from "svelte";
+	import { X, Plus } from "lucide-svelte";
 
 	export let imageId: number;
 	export let currentTags: string[] = [];
 
-	let allTags: TagRecord[] = [];
-	let newTagName = '';
+	let newTagName = "";
 	let showSuggestions = false;
 
-	onMount(async () => {
-		allTags = await getAllTags();
-	});
+	// Use global tags store
+	$: allTags = $tags;
 
 	$: suggestedTags = allTags
 		.filter((tag) => !currentTags.includes(tag.name))
-		.filter((tag) => tag.name.toLowerCase().includes(newTagName.toLowerCase()))
+		.filter((tag) =>
+			tag.name.toLowerCase().includes(newTagName.toLowerCase()),
+		)
 		.slice(0, 5);
 
 	async function addTag(tagName: string) {
 		if (!tagName.trim()) return;
-		
+
 		// Optimistic update - update UI immediately
 		const trimmedTag = tagName.trim();
 		if (!currentTags.includes(trimmedTag)) {
 			currentTags = [...currentTags, trimmedTag];
 		}
-		newTagName = '';
+		newTagName = "";
 		showSuggestions = false;
-		
+
 		// Update in background
 		await addTagToImage(imageId, trimmedTag);
-		allTags = await getAllTags();
 	}
 
 	async function removeTag(tagName: string) {
 		// Optimistic update - update UI immediately
 		currentTags = currentTags.filter((t) => t !== tagName);
-		
+
 		// Update in background
 		await removeTagFromImage(imageId, tagName);
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
+		if (e.key === "Enter") {
 			e.preventDefault();
 			addTag(newTagName);
 		}
@@ -54,7 +56,7 @@
 
 	function getTagColor(tagName: string): string {
 		const tag = allTags.find((t) => t.name === tagName);
-		return tag?.color || '#6b7280';
+		return tag?.color || "#6b7280";
 	}
 </script>
 
@@ -63,10 +65,15 @@
 		{#each currentTags as tag (tag)}
 			<span
 				class="flex items-center gap-1 rounded-full px-3 py-1 text-sm"
-				style="background-color: {getTagColor(tag)}20; color: {getTagColor(tag)}"
+				style="background-color: {getTagColor(
+					tag,
+				)}20; color: {getTagColor(tag)}"
 			>
 				{tag}
-				<button on:click={() => removeTag(tag)} class="hover:opacity-70">
+				<button
+					on:click={() => removeTag(tag)}
+					class="hover:opacity-70"
+				>
 					<X size={14} />
 				</button>
 			</span>
@@ -107,7 +114,9 @@
 								style="background-color: {tag.color}"
 							></span>
 							{tag.name}
-							<span class="text-xs text-gray-500">({tag.count})</span>
+							<span class="text-xs text-gray-500"
+								>({tag.count})</span
+							>
 						</span>
 					</button>
 				{/each}
@@ -115,4 +124,3 @@
 		{/if}
 	</div>
 </div>
-

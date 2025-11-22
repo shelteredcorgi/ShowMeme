@@ -1,37 +1,40 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { getAllTags, createTag, deleteTag, updateTagColor, generateRandomColor } from '$lib/db/tags';
-	import type { TagRecord } from '$lib/db/schema';
-	import { Plus, Trash2, Edit2 } from 'lucide-svelte';
-	import Button from '$lib/components/UI/Button.svelte';
+	import { onMount } from "svelte";
+	import {
+		createTag,
+		deleteTag,
+		updateTagColor,
+		generateRandomColor,
+	} from "$lib/db/tags";
+	import { tags, refreshTags } from "$lib/stores/filters";
+	import type { TagRecord } from "$lib/db/schema";
+	import { Plus, Trash2, Edit2 } from "lucide-svelte";
+	import Button from "$lib/components/UI/Button.svelte";
 
-	let tags: TagRecord[] = [];
-	let newTagName = '';
+	let newTagName = "";
 	let editingTag: string | null = null;
-	let editingColor = '';
+	let editingColor = "";
 
-	onMount(async () => {
-		await loadTags();
-	});
-
-	async function loadTags() {
-		tags = await getAllTags();
-		tags = tags.sort((a, b) => b.count - a.count);
-	}
+	// Use global tags store
+	$: sortedTags = $tags.sort((a, b) => b.count - a.count);
 
 	async function handleCreateTag() {
 		if (!newTagName.trim()) return;
 
 		const color = generateRandomColor();
 		await createTag(newTagName.trim(), color);
-		newTagName = '';
-		await loadTags();
+		newTagName = "";
+		await refreshTags();
 	}
 
 	async function handleDeleteTag(tagName: string) {
-		if (confirm(`Delete tag "${tagName}"? This will remove it from all images.`)) {
+		if (
+			confirm(
+				`Delete tag "${tagName}"? This will remove it from all images.`,
+			)
+		) {
 			await deleteTag(tagName);
-			await loadTags();
+			await refreshTags();
 		}
 	}
 
@@ -44,7 +47,7 @@
 		if (editingTag) {
 			await updateTagColor(editingTag, editingColor);
 			editingTag = null;
-			await loadTags();
+			await refreshTags();
 		}
 	}
 </script>
@@ -55,7 +58,7 @@
 	<div class="flex gap-2">
 		<input
 			bind:value={newTagName}
-			on:keydown={(e) => e.key === 'Enter' && handleCreateTag()}
+			on:keydown={(e) => e.key === "Enter" && handleCreateTag()}
 			type="text"
 			placeholder="New tag name..."
 			class="flex-1 rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
@@ -66,8 +69,10 @@
 	</div>
 
 	<div class="space-y-2">
-		{#each tags as tag (tag.name)}
-			<div class="flex items-center justify-between rounded-md border p-2 dark:border-gray-700">
+		{#each sortedTags as tag (tag.name)}
+			<div
+				class="flex items-center justify-between rounded-md border p-2 dark:border-gray-700"
+			>
 				<div class="flex items-center gap-2">
 					{#if editingTag === tag.name}
 						<input
@@ -87,7 +92,11 @@
 				<div class="flex gap-2">
 					{#if editingTag === tag.name}
 						<Button size="sm" on:click={saveColor}>Save</Button>
-						<Button size="sm" variant="ghost" on:click={() => editingTag = null}>Cancel</Button>
+						<Button
+							size="sm"
+							variant="ghost"
+							on:click={() => (editingTag = null)}>Cancel</Button
+						>
 					{:else}
 						<button
 							on:click={() => startEditColor(tag)}
@@ -109,10 +118,9 @@
 		{/each}
 	</div>
 
-	{#if tags.length === 0}
+	{#if sortedTags.length === 0}
 		<p class="text-sm text-gray-500 dark:text-gray-400">
 			No tags yet. Create your first tag above!
 		</p>
 	{/if}
 </div>
-

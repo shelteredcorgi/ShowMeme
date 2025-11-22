@@ -1,5 +1,18 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { get } from 'svelte/store';
+
+// Mock db before importing filters
+vi.mock('$lib/db/schema', () => ({
+	db: {
+		tags: {
+			toArray: vi.fn().mockResolvedValue([])
+		},
+		images: {
+			toArray: vi.fn().mockResolvedValue([])
+		}
+	}
+}));
+
 import {
 	allImages,
 	searchQuery,

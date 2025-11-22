@@ -4,6 +4,35 @@ export async function addImages(records: Omit<ImageRecord, 'id'>[]) {
 	return await db.images.bulkAdd(records);
 }
 
+export async function mergeImages(newRecords: Omit<ImageRecord, 'id'>[]) {
+	// Get all existing images to check for duplicates and preserve metadata
+	const existingImages = await db.images.toArray();
+	const existingMap = new Map(existingImages.map(img => [img.path, img]));
+
+	const recordsToPut: ImageRecord[] = [];
+
+	for (const record of newRecords) {
+		const existing = existingMap.get(record.path);
+		if (existing) {
+			// Preserve ID, tags, favorite status, and dateAdded
+			recordsToPut.push({
+				...record,
+				id: existing.id,
+				tags: existing.tags,
+				favorite: existing.favorite,
+				dateAdded: existing.dateAdded
+			});
+		} else {
+			// New image
+			recordsToPut.push(record as ImageRecord);
+		}
+	}
+
+	// Use bulkPut to update existing and add new
+	await db.images.bulkPut(recordsToPut);
+	await recalculateTagCounts();
+}
+
 export async function updateImageTags(imageId: number, tags: string[]) {
 	await db.images.update(imageId, { tags });
 	await recalculateTagCounts();

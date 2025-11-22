@@ -198,34 +198,34 @@
 	}
 </script>
 
-<div class="flex h-screen flex-col bg-gray-50 dark:bg-gray-900">
+<div class="flex h-screen flex-col bg-bg text-text transition-colors duration-300">
 	<!-- Header -->
-	<header class="border-b bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+	<header class="sticky top-0 z-40 glass border-b border-border transition-all duration-300">
 		<div class="flex h-16 items-center justify-between px-4">
 			<div class="flex items-center gap-4">
 				<button
 					on:click={() => ($showSidebar = !$showSidebar)}
-					class="rounded-md p-2 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 {$showSidebar ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' : ''}"
+					class="rounded-xl p-2.5 text-text-muted transition-all duration-200 hover:bg-surface hover:text-text hover:shadow-sm active:scale-95 {$showSidebar ? 'bg-accent/10 text-accent' : ''}"
 					title="{$showSidebar ? 'Hide' : 'Show'} sidebar (T)"
 				>
 					<Menu size={20} />
 				</button>
-				<h1 class="text-xl font-bold text-gray-900 dark:text-white transition-opacity duration-500 font-mono">
-					<span>{displayedText}</span><span class="cursor-blink">█</span>
+				<h1 class="text-xl font-bold text-text tracking-tight transition-opacity duration-500 font-mono flex items-center gap-2">
+					<span class="bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-transparent">{displayedText}</span><span class="cursor-blink text-accent">█</span>
 				</h1>
 			</div>
 
 			<div class="flex items-center gap-2">
 				<!-- View mode toggle -->
-				<div class="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
+				<div class="flex gap-1 rounded-xl bg-surface/50 p-1 border border-border/50 backdrop-blur-sm">
 					<button
 						on:click={() => {
 							$viewMode = 'grid';
 							goto('/');
 						}}
-						class="rounded-md p-2 text-gray-700 dark:text-gray-200 {$page.url.pathname === '/'
-							? 'bg-white shadow-sm dark:bg-gray-700'
-							: 'hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="rounded-lg p-2 transition-all duration-200 {$page.url.pathname === '/'
+							? 'bg-white shadow-sm text-accent dark:bg-white/10'
+							: 'text-text-muted hover:text-text hover:bg-white/50 dark:hover:bg-white/5'}"
 						title="Grid view (G)"
 					>
 						<Grid size={18} />
@@ -235,9 +235,9 @@
 							$viewMode = 'list';
 							goto('/list');
 						}}
-						class="rounded-md p-2 text-gray-700 dark:text-gray-200 {$page.url.pathname === '/list'
-							? 'bg-white shadow-sm dark:bg-gray-700'
-							: 'hover:bg-gray-200 dark:hover:bg-gray-700'}"
+						class="rounded-lg p-2 transition-all duration-200 {$page.url.pathname === '/list'
+							? 'bg-white shadow-sm text-accent dark:bg-white/10'
+							: 'text-text-muted hover:text-text hover:bg-white/50 dark:hover:bg-white/5'}"
 						title="List view (L)"
 					>
 						<ListIcon size={18} />
@@ -247,40 +247,40 @@
 				<!-- Favorites filter -->
 				<button
 					on:click={() => ($showFavoritesOnly = !$showFavoritesOnly)}
-					class="rounded-md p-2 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800 {$showFavoritesOnly
-						? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400'
-						: ''}"
+					class="rounded-xl p-2.5 transition-all duration-200 hover:bg-surface hover:shadow-sm active:scale-95 {$showFavoritesOnly
+						? 'bg-danger/10 text-danger'
+						: 'text-text-muted hover:text-danger'}"
 					title="Show favorites only"
 				>
-					<Heart size={18} class={$showFavoritesOnly ? 'fill-current' : ''} />
+					<Heart size={20} class={$showFavoritesOnly ? 'fill-current' : ''} />
 				</button>
 
 
 				<!-- Settings dropdown -->
 				<Dropdown bind:open={settingsOpen}>
-					<Settings size={18} slot="trigger" class="text-gray-700 dark:text-gray-200" />
+					<Settings size={20} slot="trigger" class="text-text-muted transition-colors hover:text-text" />
 					
-					<div class="py-1">
+					<div class="py-1 bg-surface border border-border rounded-xl shadow-xl overflow-hidden min-w-[200px]">
 						<!-- Random -->
 						<button
 							on:click={() => {
 								randomImage = getRandomImage();
 								settingsOpen = false;
 							}}
-							class="flex w-full items-center gap-3 px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+							class="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-text transition-colors hover:bg-bg"
 						>
-							<Shuffle size={16} />
+							<Shuffle size={16} class="text-accent" />
 							<span>Random Image</span>
-							<kbd class="ml-auto rounded bg-gray-200 px-2 py-0.5 text-xs text-gray-700 dark:bg-gray-700 dark:text-gray-300">R</kbd>
+							<kbd class="ml-auto rounded bg-bg px-2 py-0.5 text-xs text-text-muted border border-border">R</kbd>
 						</button>
 
 						<!-- Grid columns (only in grid view) -->
 						{#if $viewMode === 'grid'}
-							<div class="border-t px-4 py-2 dark:border-gray-700">
-								<label class="mb-1 block text-xs text-gray-600 dark:text-gray-400">Grid Columns</label>
+							<div class="border-t border-border px-4 py-2">
+								<label class="mb-1.5 block text-xs font-medium text-text-muted uppercase tracking-wider">Grid Columns</label>
 								<select
 									bind:value={$gridColumns}
-									class="w-full rounded-md border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
+									class="w-full rounded-lg border border-border bg-bg px-2 py-1.5 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent outline-none"
 								>
 									<option value={3}>3 columns</option>
 									<option value={4}>4 columns</option>
@@ -296,9 +296,9 @@
 								goto('/settings');
 								settingsOpen = false;
 							}}
-							class="flex w-full items-center gap-3 border-t px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-700"
+							class="flex w-full items-center gap-3 border-t border-border px-4 py-2.5 text-left text-sm text-text transition-colors hover:bg-bg"
 						>
-							<Settings size={16} />
+							<Settings size={16} class="text-text-muted" />
 							<span>Settings</span>
 						</button>
 					</div>

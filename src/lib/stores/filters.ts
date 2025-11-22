@@ -1,5 +1,5 @@
 import { derived, writable } from 'svelte/store';
-import { db, type ImageRecord } from '$lib/db/schema';
+import { db, type ImageRecord, type TagRecord } from '$lib/db/schema';
 import { generateRandomColor } from '$lib/db/tags';
 
 export const searchQuery = writable('');
@@ -76,6 +76,9 @@ export async function addTagToImage(imageId: number, tagName: string) {
 			});
 		}
 
+		// Refresh tags store to reflect count changes or new tags
+		await refreshTags();
+
 		allImages.update($images =>
 			$images.map(img => img.id === imageId ? { ...img, tags: updatedTags } : img)
 		);
@@ -94,6 +97,9 @@ export async function removeTagFromImage(imageId: number, tagName: string) {
 		await db.tags.update(tagName, { count: tag.count - 1 });
 	}
 
+	// Refresh tags store to reflect count changes
+	await refreshTags();
+
 	allImages.update($images =>
 		$images.map(img => img.id === imageId ? { ...img, tags: updatedTags } : img)
 	);
@@ -103,4 +109,16 @@ export async function refreshImagesFromDB() {
 	const images = await db.images.toArray();
 	allImages.set(images);
 }
+
+// Global tags store
+export const tags = writable<TagRecord[]>([]);
+
+export async function refreshTags() {
+	const allTags = await db.tags.toArray();
+	tags.set(allTags);
+}
+
+// Initialize tags
+refreshTags();
+
 
