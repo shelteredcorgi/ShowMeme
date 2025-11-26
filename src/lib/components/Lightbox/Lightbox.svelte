@@ -283,11 +283,11 @@
 						currentImage.lastModified,
 					).toLocaleDateString()}
 				</p>
-				{#if isTauri() && typeof $currentDirectory === "string"}
-					<p class="break-all text-xs">
-						{$currentDirectory}/{currentImage.path}
-					</p>
-				{/if}
+			{#if isTauri() && typeof $currentDirectory === "string"}
+				<p class="break-all text-xs">
+					{$currentDirectory.split('/').filter(Boolean).pop() || $currentDirectory}/{currentImage.path}
+				</p>
+			{/if}
 				<p>
 					Image {currentIndex + 1} of {allImages.length}
 				</p>

@@ -91,7 +91,7 @@
 				class="text-sm text-text-muted font-mono bg-bg p-2 rounded-lg border border-border/50 break-all"
 			>
 				{typeof $currentDirectory === "string"
-					? $currentDirectory
+					? $currentDirectory.split('/').filter(Boolean).pop() || $currentDirectory
 					: $currentDirectory.name}
 			</p>
 			{#if isTauri()}
